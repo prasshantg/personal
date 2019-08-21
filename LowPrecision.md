@@ -18,7 +18,7 @@ A calibration tool collects the dynamic range of the output tensor for each laye
 
 Refer to https://github.com/NVIDIA/TensorRT/tree/release/5.1/samples/opensource/sampleINT8 for sample application which explains how to use TensorRT to generate scales factors.
 
-Note: Use IInt8EntropyCalibrator2 for calibration and dump calibration scales using writeCalibrationCache() to import it in NVDLA JSON format
+Notes: Use IInt8EntropyCalibrator2 for calibration and dump calibration scales using writeCalibrationCache() to import it in NVDLA JSON format. Do not set --useDLACore for calibration, it is used to generate runtime engine through TensorRT for NVIDIA Xavier platform such NVIDIA Jetson AGX Xavier which has NVDLA integrated.
 
 ##### JSON schema for calibration table
 
