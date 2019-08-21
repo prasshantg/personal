@@ -55,40 +55,13 @@ The NVDLA Compiler uses the following JSON schema to import scale factors genera
 }
 ```
 
-https://github.com/nvdla/sw/tree/master/umd/utils/calibdata/calib_txt_to_json.py can be used to convert calibration scales dumped from TensorRT to NVDLA JSON format.
+##### How to covert calibration cache dump to NVDLA JSON format?
+
+https://github.com/nvdla/sw/tree/master/umd/utils/calibdata/calib_txt_to_json.py can be used to convert calibration scales generated from TensorRT to NVDLA JSON format.
+
+##### Sample calibration table
 
 Sample calibration table for [ResNet-50 Caffe model](https://github.com/KaimingHe/deep-residual-networks) is shared at https://github.com/nvdla/sw/tree/master/umd/utils/calibdata/calib.json
-
-##### Sample calibration table for first few layers of ResNet-50 using symmetric scaling
-
-```
-{
-	"data" : {
-		"scale": 0.00781453,
-		"min": 0,
-		"max": 0,
-		"offset": 0
-	},
-	"conv1" : {
-		"scale": 0.0891214,
-		"min": 0,
-		"max": 0,
-		"offset": 0
-	},
-	"pool1" : {
-		"scale": 0.0891214,
-		"min": 0,
-		"max": 0,
-		"offset": 0
-	},
-	"res2a_branch1" : {
-		"scale": 0.119546,
-		"min": 0,
-		"max": 0,
-		"offset": 0
-	}
-}
-```
 
 #### Quantize model weights and determine the converter parameters
 
