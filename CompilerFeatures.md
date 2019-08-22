@@ -35,6 +35,7 @@
 ### Frameworks support
 
 |Framework|Support|
+|---------|-------|
 |Caffe|&#10004;|
 |ONNX|Future planned|
 
