@@ -12,7 +12,8 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 
 #### Help
 
-    ./nvdla_compiler --prototxt <prototxt_file> --caffemodel <caffemodel_file> [options]
+    Usage: ./nvdla_compiler [options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
+    where options include:
     -h                                              print this help message
     -o <outputpath>                                 outputs wisdom files in 'outputpath' directory
     --profile <basic|default|performance|fast-math> computation profile (default: fast-math)
@@ -23,15 +24,8 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
     --batch                                         batch size (default: 1)
     --informat <ncxhwx|nchw|nhwc>                   input data format (default: nhwc)
 
-<p align="center">
-<img src="https://github.com/prasshantg/personal/blob/master/compiler_use.png">
-</p>
-
 #### Example compiling ResNet-50 for nv_small
 
-<p align="center">
-<img src="https://github.com/prasshantg/personal/blob/master/compiler_log.png">
-</p>
 
 #### Output
 
@@ -39,7 +33,16 @@ Once the compilation is successful, it will generate <profile-name>.nvdla file i
 
 ## NVDLA Runtime
 
+### Help
 
+    Usage: ./nvdla_runtime [-options] --loadable <loadable_file>
+    where options include:
+    -h                    print this help message
+    -s                    launch test in server mode
+    --image <file>        input jpg/pgm file
+    --normalize <value>   normalize value for input image
+    --mean <value>        comma separated mean value for input image
+    --rawdump             dump raw dimg data
 
 
 # Low Precision inference using NVDLA
