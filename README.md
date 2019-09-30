@@ -1,3 +1,18 @@
+# Getting started with NVDLA
+
+NVDLA enables accelerating neural network inference job which is achieved in two steps
+1. Optimize trained neural network for DLA hardware and convert the graph to DLA HW instructions. This converted graph is saved to a flatbuffer file called as loadable. This is achieved using NVDLA compiler and performed offline on host system.
+2. Run inference job on DLA using loadable from step 1. This is achieved using NVDLA runtime and performed on target system.
+
+## NVDLA Compiler
+
+NVDLA compiler is used to optimize neural network for DLA HW architecture and create list of HW instructions to run inference on DLA. Source code for NVDLA compiler is open and present at https://github.com/nvdla/sw/tree/master/umd/core/src/compiler Pre-compiled binary for it is at https://github.com/nvdla/sw/tree/master/prebuilt/x86-ubuntu
+
+### Compiling network using NVDLA Compiler
+
+
+
+
 # Low Precision inference using NVDLA
 
 NVDLA supports inference using int8 precision. Since low precision is not used for training, it requires to quantize trained models from higher precision such as fp32 to int8 for inference.
