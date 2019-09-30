@@ -12,6 +12,17 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 
 #### Help
 
+    ./nvdla_compiler --prototxt <prototxt_file> --caffemodel <caffemodel_file> [options]
+    -h                                              print this help message
+    -o <outputpath>                                 outputs wisdom files in 'outputpath' directory
+    --profile <basic|default|performance|fast-math> computation profile (default: fast-math)
+    --cprecision <fp16|int8>                        compute precision (default: fp16)
+    --configtarget <nv_full|nv_large|nv_small>      target platform (default: nv_full)
+    --calibtable <int8 calibration table>           calibration table for INT8 networks (default: 0.00787)
+    --quantizationMode <per-kernel|per-filter>      quantization mode for INT8 (default: per-kernel)
+    --batch                                         batch size (default: 1)
+    --informat <ncxhwx|nchw|nhwc>                   input data format (default: nhwc)
+
 <p align="center">
 <img src="https://github.com/prasshantg/personal/blob/master/compiler_use.png">
 </p>
