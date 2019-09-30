@@ -13,13 +13,13 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 #### Help
 
 <p align="center">
-<img src="https://github.com/prasshantg/personal/blob/master/compiler_log.png">
+<img src="https://github.com/prasshantg/personal/blob/master/compiler_use.png">
 </p>
 
 #### Example
 
 <p align="center">
-<img src="https://github.com/prasshantg/personal/blob/master/compiler_use.png">
+<img src="https://github.com/prasshantg/personal/blob/master/compiler_log.png">
 </p>
 
 # Low Precision inference using NVDLA
