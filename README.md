@@ -112,7 +112,7 @@ cd /mnt
 insmod drm.ko # install drm driver
 insmod opendla_1.ko # install nvdla driver
 
-After this follow guideline for NVDLA [compiler](#NVDLA Compiler) and [runtime](#NVDLA runtime) to run inference on NVDLA
+After this follow guideline for NVDLA [compiler](#nvdla-ompiler) and [runtime](#nvdla-runtime) to run inference on NVDLA
 
 ##### Exit NVDLA virtual simulator
 ctrl+a x
