@@ -22,6 +22,15 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 <img src="https://github.com/prasshantg/personal/blob/master/compiler_log.png">
 </p>
 
+#### Output
+
+Once the compilation is successful, it will generate <profile-name>.nvdla file in output directort specified using -o argument. For example, in above case it will generate fast-math.nvdla in curren directory.
+
+## NVDLA Runtime
+
+
+
+
 # Low Precision inference using NVDLA
 
 NVDLA supports inference using int8 precision. Since low precision is not used for training, it requires to quantize trained models from higher precision such as fp32 to int8 for inference.
