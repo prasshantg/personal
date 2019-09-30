@@ -172,9 +172,9 @@ make
 make install
 ```
 
-#### Installing system requirements
+## Installing system requirements for Virtual Platform
 
-##### Install tools and libraries
+### Install tools and libraries
 
 ```
 sudo apt-get update
@@ -192,7 +192,7 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 ```
 
-##### Install SystemC 2.3.0 (Note: SystemC 2.3.1/2.3.2 not supported)
+### Install SystemC 2.3.0 (Note: SystemC 2.3.1/2.3.2 not supported)
 
 ```
 wget -O systemc-2.3.0a.tar.gz http://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.0a.tar.gz 
@@ -206,7 +206,7 @@ make
 sudo make install
 ```
 
-##### Install Perl package
+### Install Perl package
 
 ```
 wget -O YAML-1.24.tar.gz http://search.cpan.org/CPAN/authors/id/T/TI/TINITA/YAML-1.24.tar.gz 
