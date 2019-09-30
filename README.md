@@ -8,9 +8,7 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 
 NVDLA compiler is used to optimize neural network for DLA HW architecture and create list of HW instructions to run inference on DLA.  NVDLA compiler can be built from [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/compiler) or directly use [pre-compiled binary](https://github.com/nvdla/sw/tree/master/prebuilt/x86-ubuntu)
 
-### Compiling network using NVDLA Compiler
-
-#### Help
+### Help
 
     Usage: ./nvdla_compiler [options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
     where options include:
@@ -24,13 +22,20 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
     --batch                                         batch size (default: 1)
     --informat <ncxhwx|nchw|nhwc>                   input data format (default: nhwc)
 
-#### Example compiling ResNet-50 for nv_small
+### Example compiling ResNet-50 for nv_small
 
     ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_small --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
 
-#### Output
+### Output
 
 Once the compilation is successful, it will generate <profile-name>.nvdla file in output directort specified using -o argument. For example, in above case it will generate fast-math.nvdla in curren directory.
+
+### Modifying NVDLA Compiler
+
+NVDLA Compiler can be updated using [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/compiler) and rebuild as below
+
+    export TOP={sw-repo-root}/umd
+    make compiler
 
 ## NVDLA Runtime
 
@@ -50,6 +55,25 @@ NVDLA compiler is used to run inference on DLA platform using loadable generated
 ### Example running ResNet-50 on nv_small
 
     ./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg --rawdump
+
+### Modifying NVDLA Compiler
+
+NVDLA Runtime can be updated using [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/runtime) and rebuild as below
+
+    export TOP={sw-repo-root}/umd
+    make TOOLCHAIN_PREFIX=<path_to_toolchanin> runtime
+
+#### For example
+
+    ARM64
+    export TOP={sw-repo-root}/umd
+    make TOOLCHAIN_PREFIX={buildroot-root}/output/host/bin/aarch64-linux-gnu- runtime
+    
+    RISC-V
+    export TOP={sw-repo-root}/umd
+    make TOOLCHAIN_PREFIX={firesim-nvdla-repo}/riscv-tools-install/bin/riscv64-unknown-linux-gnu- runtime
+
+See for buildroot instructions and for riscv-tools installation instructions
 
 # Low Precision inference using NVDLA
 
