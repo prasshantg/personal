@@ -91,7 +91,7 @@ There are two options to use virtual platform
 
 #### Using pre-built virtual simulator in docker
 
-This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for nv_full configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
+This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for *nv_full* configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
 
 Steps to use it
 
@@ -112,7 +112,116 @@ cd /mnt
 insmod drm.ko # install drm driver
 insmod opendla_1.ko # install nvdla driver
 
-After this follow guideline for NVDLA [compiler](#nvdla-ompiler) and [runtime](#nvdla-runtime) to run inference on NVDLA
+After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](#nvdla-runtime) to run inference on NVDLA
 
 ##### Exit NVDLA virtual simulator
 ctrl+a x
+
+#### Build virtual simulator in docker
+
+Docker container has pre-installed all system requirements to build virtual simulator. If not using then refer to [installing system requirements](installing-system-requirements).
+
+##### Clone VP source code
+
+```
+git clone https://github.com/nvdla/vp.git
+cd vp
+git submodule update --init --recursive
+```
+
+##### Download CMOD
+
+```
+git clone https://github.com/nvdla/hw.git 
+cd hw
+```
+
+##### Build CMOD and VP for nv_full
+
+```
+cd hw
+git checkout origin/nvdla1
+make
+```
+
+Options to select for nv_full configuration
+```
+Enter project names      (Press ENTER to use: nv_full):nv_full
+Enter c pre-processor path (Press ENTER to use: /home/utils/gcc-4.9.3/bin/cpp):/usr/bin/cpp
+Enter g++ path           (Press ENTER to use: /home/utils/gcc-4.9.3/bin/g++):/usr/bin/g++
+Enter perl path          (Press ENTER to use: /home/utils/perl-5.8.8/bin/perl):/usr/bin/perl
+Enter java path          (Press ENTER to use: /home/utils/java/jdk1.8.0_131/bin/java):/usr/bin/java
+Enter systemc path       (Press ENTER to use: /usr/local/systemc-2.3.0/):
+OPTIONAL: Enter verilator path (Press ENTER to use: verilator):
+OPTIONAL: Enter clang path     (Press ENTER to use: clang):
+```
+
+```
+ tools/bin/tmake -build cmod_top
+ ```
+
+Build VP
+```
+cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
+
+for example
+cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -DNVDLA_HW_PREFIX=/odla/vpr/nv_full -DNVDLA_HW_PROJECT=nv_full
+```
+```
+make
+make install
+```
+
+#### Installing system requirements
+
+##### Install tools and libraries
+
+```
+sudo apt-get update
+sudo apt-get install g++ cmake libboost-dev python-dev libglib2.0-dev libpixman-1-dev liblua5.2-dev swig libcap-dev libattr1-dev default-jdk
+
+Steps required if using Ubuntu higher than 14.04
+
+sudo apt-get install python-software-properties
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install gcc-4.8
+sudo apt-get install g++-4.8
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+```
+
+##### Install SystemC 2.3.0 (Note: SystemC 2.3.1/2.3.2 not supported)
+
+```
+wget -O systemc-2.3.0a.tar.gz http://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.0a.tar.gz 
+tar -xzvf systemc-2.3.0a.tar.gz
+cd systemc-2.3.0a
+sudo mkdir -p /usr/local/systemc-2.3.0/
+mkdir objdir
+cd objdir
+../configure --prefix=/usr/local/systemc-2.3.0
+make
+sudo make install
+```
+
+##### Install Perl package
+
+```
+wget -O YAML-1.24.tar.gz http://search.cpan.org/CPAN/authors/id/T/TI/TINITA/YAML-1.24.tar.gz 
+tar -xzvf YAML-1.24.tar.gz 
+cd YAML-1.24
+perl Makefile.PL
+make
+sudo make install
+wget -O IO-Tee-0.65.tar.gz http://search.cpan.org/CPAN/authors/id/N/NE/NEILB/IO-Tee-0.65.tar.gz 
+tar -xzvf IO-Tee-0.65.tar.gz
+cd IO-Tee-0.65
+perl Makefile.PL
+make
+sudo make install
+cpan -i Capture::Tiny [Note: Fix nvdla.org for it]
+cpan -i XML::Simple [Note: Fix nvdla.org for it]
+```
+
