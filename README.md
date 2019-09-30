@@ -10,8 +10,17 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 
 ### Compiling network using NVDLA Compiler
 
+#### Help
 
+<p align="center">
+<img src="https://github.com/prasshantg/personal/blob/master/compiler_log.png">
+</p>
 
+#### Example
+
+<p align="center">
+<img src="https://github.com/prasshantg/personal/blob/master/compiler_use.png">
+</p>
 
 # Low Precision inference using NVDLA
 
