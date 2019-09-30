@@ -89,7 +89,7 @@ There are two options to use virtual platform
 1. Pre-built virtual simulator in docker
 2. Build and install virtual simulator
 
-#### Using pre-built virtual simulator in docker
+#### 1. Using pre-built virtual simulator in docker
 
 This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for *nv_full* configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
 
@@ -117,9 +117,9 @@ After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](
 ##### Exit NVDLA virtual simulator
 ctrl+a x
 
-#### Build virtual simulator in docker
+#### 2. Build virtual simulator in docker
 
-Docker container has pre-installed all system requirements to build virtual simulator. If not using then refer to [installing system requirements](installing-system-requirements).
+Docker container has pre-installed all system requirements to build virtual simulator. If not using docker container then refer to [installing system requirements](installing-system-requirements).
 
 ##### Clone VP source code
 
@@ -164,8 +164,94 @@ Build VP
 ```
 cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
 
-for example
+For example:
 cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -DNVDLA_HW_PREFIX=/odla/vpr/nv_full -DNVDLA_HW_PROJECT=nv_full
+```
+```
+make
+make install
+```
+
+##### Build CMOD and VP for nv_large
+
+```
+cd hw
+git checkout origin/master
+make
+```
+
+Options to select for nv_large configuration
+```
+Enter project names      (Press ENTER if use: nv_small nv_small_256 nv_small_256_full nv_medium_512 nv_medium_1024_full nv_large):nv_large
+Using designware or not [1 for use/0 for not use] (Press ENTER if use: 1):
+Enter design ware path (Press ENTER if use: /home/tools/synopsys/syn_2011.09/dw/sim_ver):
+Enter c pre-processor path (Press ENTER if use: /home/utils/gcc-4.8.2/bin/cpp):/usr/bin/cpp
+Enter gcc path             (Press ENTER if use: /home/utils/gcc-4.8.2/bin/gcc):/usr/bin/gcc
+Enter g++ path             (Press ENTER if use: /home/utils/gcc-4.8.2/bin/g++):/usr/bin/g++
+Enter perl path            (Press ENTER if use: /home/utils/perl-5.10/5.10.0-threads-64/bin/perl):/usr/bin/perl
+Enter java path            (Press ENTER if use: /home/utils/java/jdk1.8.0_131/bin/java):/usr/bin/java
+Enter systemc path         (Press ENTER if use: /home/ip/shared/inf/SystemC/1.0/20151112/systemc-2.3.0/GCC472_64_DBG):/usr/local/systemc-2.3.0
+Enter python path          (Press ENTER if use: /home/tools/continuum/Anaconda3-5.0.1/bin/python):/usr/bin/python
+Enter vcs_home path        (Press ENTER if use: /home/tools/vcs/mx-2016.06-SP2-4):
+Enter novas_home path      (Press ENTER if use: /home/tools/debussy/verdi3_2016.06-SP2-9):
+Enter verdi_home path      (Press ENTER if use: /home/tools/debussy/verdi3_2016.06-SP2-9):
+OPTIONAL: Enter verilator path (Press ENTER to use: verilator):
+OPTIONAL: Enter clang path     (Press ENTER to use: /home/utils/llvm-4.0.1/bin/clang):
+```
+
+```
+ tools/bin/tmake -build cmod_top
+ ```
+
+Build VP
+```
+cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
+
+For example:
+cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -DNVDLA_HW_PREFIX=/odla/vpr/nv_large -DNVDLA_HW_PROJECT=nv_large
+```
+```
+make
+make install
+```
+
+##### Build CMOD and VP for nv_small
+
+```
+cd hw
+git checkout origin/master
+make
+```
+
+Options to select for nv_small configuration
+```
+Enter project names      (Press ENTER if use: nv_small nv_small_256 nv_small_256_full nv_medium_512 nv_medium_1024_full nv_large):nv_small
+Using designware or not [1 for use/0 for not use] (Press ENTER if use: 1):
+Enter design ware path (Press ENTER if use: /home/tools/synopsys/syn_2011.09/dw/sim_ver):
+Enter c pre-processor path (Press ENTER if use: /home/utils/gcc-4.8.2/bin/cpp):/usr/bin/cpp
+Enter gcc path             (Press ENTER if use: /home/utils/gcc-4.8.2/bin/gcc):/usr/bin/gcc
+Enter g++ path             (Press ENTER if use: /home/utils/gcc-4.8.2/bin/g++):/usr/bin/g++
+Enter perl path            (Press ENTER if use: /home/utils/perl-5.10/5.10.0-threads-64/bin/perl):/usr/bin/perl
+Enter java path            (Press ENTER if use: /home/utils/java/jdk1.8.0_131/bin/java):/usr/bin/java
+Enter systemc path         (Press ENTER if use: /home/ip/shared/inf/SystemC/1.0/20151112/systemc-2.3.0/GCC472_64_DBG):/usr/local/systemc-2.3.0
+Enter python path          (Press ENTER if use: /home/tools/continuum/Anaconda3-5.0.1/bin/python):/usr/bin/python
+Enter vcs_home path        (Press ENTER if use: /home/tools/vcs/mx-2016.06-SP2-4):
+Enter novas_home path      (Press ENTER if use: /home/tools/debussy/verdi3_2016.06-SP2-9):
+Enter verdi_home path      (Press ENTER if use: /home/tools/debussy/verdi3_2016.06-SP2-9):
+OPTIONAL: Enter verilator path (Press ENTER to use: verilator):
+OPTIONAL: Enter clang path     (Press ENTER to use: /home/utils/llvm-4.0.1/bin/clang):
+```
+
+```
+ tools/bin/tmake -build cmod_top
+ ```
+
+Build VP
+```
+cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
+
+For example:
+cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -DNVDLA_HW_PREFIX=/odla/vpr/nv_small -DNVDLA_HW_PROJECT=nv_small
 ```
 ```
 make
