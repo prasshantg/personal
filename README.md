@@ -26,6 +26,7 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 
 #### Example compiling ResNet-50 for nv_small
 
+    ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_small --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
 
 #### Output
 
@@ -46,6 +47,9 @@ NVDLA compiler is used to run inference on DLA platform using loadable generated
     --mean <value>        comma separated mean value for input image
     --rawdump             dump raw dimg data
 
+### Example running ResNet-50 on nv_small
+
+    ./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg --rawdump
 
 # Low Precision inference using NVDLA
 
