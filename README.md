@@ -4,10 +4,24 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 1. Optimize trained neural network for DLA hardware and convert the graph to DLA HW instructions. This converted graph is saved to a flatbuffer file called as loadable. This is achieved using NVDLA compiler and performed offline on host system.
 2. Run inference job on DLA using loadable from step 1. This is achieved using NVDLA runtime and performed on target system.
 
+* [NVDLA Compiler](#nvdla-compiler)
+    * [Help](#nvdla-compiler-help)
+    * [Example compiling ResNet-50 for nv_small](#nvdla-compiler-example)
+    * [Output](#output)
+    * [Modifying NVDLA Compiler](#nvdla-compiler-update)
+* [NVDLA Runtime](#nvdla-runtime)
+    * [Help](#nvdla-runtime-help)
+    * [Example running ResNet-50 on nv_small](#nvdla-runtime-example)
+    * [Modifying NVDLA Runtime](#nvdla-runtime-update)
+* [NVDLA Platforms](#nvdla-platforms)
+* [Installing system requirements for Virtual Platform](#system-requirements)
+
+
 ## NVDLA Compiler
 
 NVDLA compiler is used to optimize neural network for DLA HW architecture and create list of HW instructions to run inference on DLA.  NVDLA compiler can be built from [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/compiler) or directly use [pre-compiled binary](https://github.com/nvdla/sw/tree/master/prebuilt/x86-ubuntu)
 
+<a name="nvdla-compiler-help"></a>
 ### Help
 
     Usage: ./nvdla_compiler [options] --prototxt <prototxt_file> --caffemodel <caffemodel_file>
@@ -22,14 +36,17 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
     --batch                                         batch size (default: 1)
     --informat <ncxhwx|nchw|nhwc>                   input data format (default: nhwc)
 
+<a name="nvdla-compiler-example"></a>
 ### Example compiling ResNet-50 for nv_small
 
     ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_small --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
 
+<a name="nvdla-compiler-output"></a>
 ### Output
 
 Once the compilation is successful, it will generate <profile-name>.nvdla file in output directort specified using -o argument. For example, in above case it will generate fast-math.nvdla in curren directory.
 
+<a name="nvdla-compiler-update"></a>
 ### Modifying NVDLA Compiler
 
 NVDLA Compiler can be updated using [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/compiler) and rebuild as below
@@ -41,6 +58,7 @@ NVDLA Compiler can be updated using [source code](https://github.com/nvdla/sw/tr
 
 NVDLA compiler is used to run inference on DLA platform using loadable generated from NVDLA compiler. NVDLA runtime can be built from [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/runtime) or directly use pre-compiled binary [arm64](https://github.com/nvdla/sw/tree/master/prebuilt/arm64-linux) or [risc-v](https://github.com/nvdla/sw/tree/master/prebuilt/riscv-linux)
 
+<a name="nvdla-runtime-help"></a>
 ### Help
 
     Usage: ./nvdla_runtime [-options] --loadable <loadable_file>
@@ -52,18 +70,20 @@ NVDLA compiler is used to run inference on DLA platform using loadable generated
     --mean <value>        comma separated mean value for input image
     --rawdump             dump raw dimg data
 
+<a name="nvdla-runtime-example"></a>
 ### Example running ResNet-50 on nv_small
 
     ./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg --rawdump
 
-### Modifying NVDLA Compiler
+<a name="nvdla-runtime-update"></a>
+### Modifying NVDLA Runtime
 
 NVDLA Runtime can be updated using [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/runtime) and rebuild as below
 
     export TOP={sw-repo-root}/umd
     make TOOLCHAIN_PREFIX=<path_to_toolchanin> runtime
 
-#### For example
+For example:
 
     ARM64
     export TOP={sw-repo-root}/umd
@@ -83,12 +103,22 @@ Below platforms are available for NVDLA development and verification
 2. [Virtual Platform on AWS FPGA](http://nvdla.org/vp_fpga.html)
 3. [FireSim](https://github.com/nvdla/firesim-nvdla)
 
+* [Virtual Platform](#virtual-platform)
+    * [Using pre-built virtual simulator in docker](#prebuilt-docker)
+    * [Build virtual simulator in docker](#build-vp)
+        * [nv_full](#nv_full)
+        * [nv_large](#nv_large)
+        * [nv_small](#nv_small)
+* [Virtual Platform on AWS FPGA](#virtual-platform-on-aws-fpga)
+* [FireSim](#firesim)
+
 ### Virtual Platform
 
 There are two options to use virtual platform
 1. Pre-built virtual simulator in docker
 2. Build and install virtual simulator
 
+<a name="prebuilt-docker"></a>
 #### 1. Using pre-built virtual simulator in docker
 
 This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for *nv_full* configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
@@ -117,30 +147,20 @@ After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](
 ##### Exit NVDLA virtual simulator
 ctrl+a x
 
+<a name="build-vp"></a>
 #### 2. Build virtual simulator in docker
 
 Docker container has pre-installed all system requirements to build virtual simulator. If not using docker container then refer to [installing system requirements](installing-system-requirements).
 
-##### Clone VP source code
-
-```
-git clone https://github.com/nvdla/vp.git
-cd vp
-git submodule update --init --recursive
-```
-
-##### Download CMOD
+#### nv_full
 
 ```
 git clone https://github.com/nvdla/hw.git 
 cd hw
-```
-
-##### Build CMOD and VP for nv_full
-
-```
-cd hw
 git checkout origin/nvdla1
+```
+
+```
 make
 ```
 
@@ -160,7 +180,14 @@ OPTIONAL: Enter clang path     (Press ENTER to use: clang):
  tools/bin/tmake -build cmod_top
  ```
 
-Build VP
+Download and Build VP
+
+```
+git clone https://github.com/nvdla/vp.git
+cd vp
+git submodule update --init --recursive
+```
+
 ```
 cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
 
@@ -172,11 +199,15 @@ make
 make install
 ```
 
-##### Build CMOD and VP for nv_large
+#### nv_large
 
 ```
+git clone https://github.com/nvdla/hw.git 
 cd hw
 git checkout origin/master
+```
+
+```
 make
 ```
 
@@ -201,9 +232,16 @@ OPTIONAL: Enter clang path     (Press ENTER to use: /home/utils/llvm-4.0.1/bin/c
 
 ```
  tools/bin/tmake -build cmod_top
- ```
+```
 
-Build VP
+Download and Build VP
+
+```
+git clone https://github.com/nvdla/vp.git
+cd vp
+git submodule update --init --recursive
+```
+
 ```
 cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
 
@@ -215,11 +253,15 @@ make
 make install
 ```
 
-##### Build CMOD and VP for nv_small
+##### nv_small
 
 ```
+git clone https://github.com/nvdla/hw.git 
 cd hw
 git checkout origin/master
+```
+
+```
 make
 ```
 
@@ -246,18 +288,27 @@ OPTIONAL: Enter clang path     (Press ENTER to use: /home/utils/llvm-4.0.1/bin/c
  tools/bin/tmake -build cmod_top
  ```
 
-Build VP
+Download and Build VP
+
+```
+git clone https://github.com/nvdla/vp.git
+cd vp
+git submodule update --init --recursive
+```
+
 ```
 cmake -DCMAKE_INSTALL_PREFIX=[install dir] -DSYSTEMC_PREFIX=[systemc prefix] -DNVDLA_HW_PREFIX=[nvdla_hw prefix] -DNVDLA_HW_PROJECT=[nvdla_hw project name]
 
 For example:
 cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -DNVDLA_HW_PREFIX=/odla/vpr/nv_small -DNVDLA_HW_PROJECT=nv_small
 ```
+
 ```
 make
 make install
 ```
 
+<a name="system-requirements"></a>
 ## Installing system requirements for Virtual Platform
 
 ### Install tools and libraries
