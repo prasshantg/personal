@@ -6,7 +6,7 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 
 ## NVDLA Compiler
 
-NVDLA compiler is used to optimize neural network for DLA HW architecture and create list of HW instructions to run inference on DLA. Source code for NVDLA compiler is open and present at https://github.com/nvdla/sw/tree/master/umd/core/src/compiler Pre-compiled binary for it is at https://github.com/nvdla/sw/tree/master/prebuilt/x86-ubuntu
+NVDLA compiler is used to optimize neural network for DLA HW architecture and create list of HW instructions to run inference on DLA.  NVDLA compiler can be built from [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/compiler) or directly use [pre-compiled binary](https://github.com/nvdla/sw/tree/master/prebuilt/x86-ubuntu)
 
 ### Compiling network using NVDLA Compiler
 
