@@ -296,19 +296,15 @@ If you want to update NVDLA kernel driver then update code at {firesim-nvdla-rep
 Below platforms are available for NVDLA development and verification
 
 * [Virtual Platform](#virtual-platform)
-    * [Build virtual simulator in docker](#build-vp)
-        * [nv_full](#nv_full)
-        * [nv_large](#nv_large)
-        * [nv_small](#nv_small)
+	* [nv_full](#nv_full)
+    * [nv_large](#nv_large)
+    * [nv_small](#nv_small)
 * [Virtual Platform on AWS FPGA](#virtual-platform-on-aws-fpga)
 * [FireSim](#firesim)
 
 ### Virtual Platform
 
 More details at http://nvdla.org/vp.html
-
-<a name="build-vp"></a>
-#### Build virtual simulator
 
 Docker container has pre-installed all system requirements to build virtual simulator. If not using docker container then refer to [installing system requirements](installing-system-requirements).
 
