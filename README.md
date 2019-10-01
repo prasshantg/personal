@@ -41,11 +41,12 @@ docker run -it -v /home:/home nvdla/vp
 <a name="ins-kmd-mod"></a>
 #### Run Simulator
 
+```
 cd /usr/local/nvdla
 export SC_SIGNAL_WRITE_CHECK=DISABLE
 aarch64_toplevel -c aarch64_nvdla.lua
 mount -t 9p -o trans=virtio r /mnt
-
+```
 
 #### Insert kernel driver modules
 
@@ -76,6 +77,10 @@ Note:
 ```
 It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for fp16 and ~5hrs for int8. Sometimes it looks like hang but wait.
 ```
+
+<a name="exit-vp"></a>
+#### Exit NVDLA virtual simulator
+ctrl+a x
 
 ### Virtual platform from scratch
 
@@ -123,10 +128,36 @@ cp {sw-repo-root}/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so 
 15. [Run simulator](#run-simulator)
 16. [Insert kernel driver modules](#ins-kmd-mod)
 17. [Run application](#run-application)
+18. [Exit virtual simulator](#exit-vp)
 
 <a name="firesim-test-app"></a>
 ### FireSim
 
+This section explains how to run ResNet-50 caffe model on FireSim platform. This platform supports only nv_large and nv_small configurations currently.
+
+1. If FireSim setup is not done then do the [setup](#firesim-setup) and come back, otherwise jump to step 2.
+2. [Configure FireSim for NVDLA](#firesim-config) (nv_large/nv_small)
+3. Build NVDLA runtime for RISC-V
+```
+export TOP={firesim-nvdla-repo}/sw/firesim-software/nvdla/sw/umd
+make TOOLCHAIN_PREFIX={firesim-nvdla-repo}/riscv-tools-install/bin/riscv64-unknown-linux-gnu- runtime
+```
+4. Copy NVDLA runtime lib and test application
+```
+cp {firesim-nvdla-repo}/sw/firesim-software/nvdla/sw/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so {firesim-nvdla-repo}/sw/firesim-software/workloads/nvdla/overlay/root/nvdla/
+cp {firesim-nvdla-repo}/sw/firesim-software/nvdla/sw/umd/out/apps/runtime/nvdla_runtime/nvdla_runtime {firesim-nvdla-repo}/sw/firesim-software/workloads/nvdla/overlay/root/nvdla/
+```
+5. Copy loadable and image
+```
+cp {some-path}/fast-math.nvdla {firesim-nvdla-repo}/sw/firesim-software/workloads/nvdla/overlay/root/nvdla/
+cp {some-path}/0000.jpg {firesim-nvdla-repo}/sw/firesim-software/workloads/nvdla/overlay/root/nvdla/
+```
+6. Build NVDLA software
+```
+cd firesim-nvdla/sw/firesim-software
+./marshal -v build workloads/nvdla.json
+./marshal install workloads/nvdla.json
+```
 
 
 ## NVDLA Compiler
@@ -209,7 +240,7 @@ For example:
     make TOOLCHAIN_PREFIX={buildroot-root}/output/host/bin/aarch64-linux-gnu- runtime
     
     RISC-V
-    export TOP={sw-repo-root}/umd
+    export TOP={firesim-nvdla-repo}/sw/firesim-software/nvdla/sw/umd
     make TOOLCHAIN_PREFIX={firesim-nvdla-repo}/riscv-tools-install/bin/riscv64-unknown-linux-gnu- runtime
 
 Note:
@@ -261,7 +292,6 @@ If you want to update NVDLA kernel driver then update code at {firesim-nvdla-rep
 Below platforms are available for NVDLA development and verification
 
 * [Virtual Platform](#virtual-platform)
-    * [Using pre-built virtual simulator in docker](#prebuilt-docker)
     * [Build virtual simulator in docker](#build-vp)
         * [nv_full](#nv_full)
         * [nv_large](#nv_large)
@@ -271,38 +301,7 @@ Below platforms are available for NVDLA development and verification
 
 ### Virtual Platform
 
-There are two options to use virtual platform
-1. Pre-built virtual simulator in docker
-2. Build and install virtual simulator
-
-<a name="prebuilt-docker"></a>
-#### Using pre-built virtual simulator in docker
-
-This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for *nv_full* configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
-
-Steps to use it
-
-##### Install docker
-https://docs.docker.com/engine/installation
-
-##### Start the container
-docker pull nvdla/vp # pull the docker image docker run -it -v /home:/home nvdla/vp # create and start the container
-
-##### Start NVDLA virtual simulator
-Inside the container:
-cd /usr/local/nvdla
-aarch64_toplevel -c aarch64_nvdla.lua # start the virtual simulator # Login the kernel with account 'root' and password 'nvdla'
-
-##### Install NVDLA demo kernel driver
-After login the kernel: mount -t 9p -o trans=virtio r /mnt 
-cd /mnt
-insmod drm.ko # install drm driver
-insmod opendla_1.ko # install nvdla driver
-
-After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](#nvdla-runtime) to run inference on NVDLA
-
-##### Exit NVDLA virtual simulator
-ctrl+a x
+More details at http://nvdla.org/vp.html
 
 <a name="build-vp"></a>
 #### Build virtual simulator
@@ -463,6 +462,76 @@ cmake -DCMAKE_INSTALL_PREFIX=build -DSYSTEMC_PREFIX=/usr/local/systemc-2.3.0/ -D
 ```
 make
 make install
+```
+
+### Virtual Platform on AWS FPGA
+
+TBD
+
+### FireSim
+
+FireSim-NVDLA is a fork of the FireSim FPGA-accelerated full-system simulator integrated with NVIDIA Deep Learning Accelerator (NVDLA). 
+
+https://github.com/nvdla/firesim-nvdla is forked from https://github.com/CSL-KU/firesim-nvdla to run NVDLA native test application on FireSim platform.
+
+Original FireSim+NVDLA integration is maintained by the Computer Systems Design Laboratory at the University of Kansas. FireSim-NVDLA runs on the Amazon FPGA cloud (EC2 F1 instance).
+
+<a name="firesim-setup"></a>
+#### Setup
+To work with FireSim-NVDLA, first, you need to learn how to use FireSim. It is recommended to follow the steps in the [FireSim documentation (v1.6.0)](http://docs.fires.im/en/1.6.0) to set up the simulator and run a single-node simulation. Please make sure that you are following the right version of the documentation. The only difference in setup is you use the URL of this repository when cloning in [Setting up the FireSim Repo](http://docs.fires.im/en/1.6.0/Initial-Setup/Setting-up-your-Manager-Instance.html#setting-up-the-firesim-repo):
+
+```
+git clone https://github.com/nvdla/firesim-nvdla
+cd firesim-nvdla
+./build-setup.sh fast
+```
+
+After successfully running a single-node simulation, come back to this guide and follow the rest of [instructions](#firesim-test-app) to run test application on FireSim platform.
+
+**Note:** Make sure that you are using `FPGA Developer AMI - 1.6.0`. Version 1.5.0 no longer works due to the issues related to Python.
+
+<a name="firesim-config"></a>
+#### Configure FireSim for NVDLA
+
+Configure FireSim to simulate the target which has the NVDLA model. For that, in `firesim-nvdla/deploy/config_runtime.ini`, change the parameter `defaulthwconfig` to `firesim-quadcore-no-nic-nvdla-ddr3-llc4mb`. Additionally, change `workloadname` to `nvdla.json`. Your final `config_runtime.ini` should look like this:
+
+```
+# RUNTIME configuration for the FireSim Simulation Manager
+# See docs/Advanced-Usage/Manager/Manager-Configuration-Files.rst for documentation of all of these params.
+
+[runfarm]
+runfarmtag=mainrunfarm
+
+f1_16xlarges=0
+m4_16xlarges=0
+f1_4xlarges=0
+f1_2xlarges=1
+
+runinstancemarket=ondemand
+spotinterruptionbehavior=terminate
+spotmaxprice=ondemand
+
+[targetconfig]
+topology=no_net_config
+no_net_num_nodes=1
+linklatency=6405
+switchinglatency=10
+netbandwidth=200
+profileinterval=-1
+
+# This references a section from config_hwconfigs.ini
+# In homogeneous configurations, use this to set the hardware config deployed
+# for all simulators
+defaulthwconfig=firesim-quadcore-no-nic-nvdla-ddr3-llc4mb
+
+[tracing]
+enable=no
+startcycle=0
+endcycle=-1
+
+[workload]
+workloadname=nvdla.json
+terminateoncompletion=no
 ```
 
 ## Dependencies
