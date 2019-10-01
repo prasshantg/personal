@@ -195,7 +195,7 @@ After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](
 ctrl+a x
 
 <a name="build-vp"></a>
-#### 2. Build virtual simulator in docker
+#### 2. Build virtual simulator
 
 Docker container has pre-installed all system requirements to build virtual simulator. If not using docker container then refer to [installing system requirements](installing-system-requirements).
 
@@ -470,7 +470,7 @@ This section explains how to run test application on different platforms and dep
 ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
 
 <a name="test-app-on-vp"></a>
-### Virtual platform on docker container
+### Virtual platform with pre-built
 
 This section explains how to run test application on docker container which has pre-built binaries for nv_full configuration.
 
@@ -503,3 +503,34 @@ fast-math.nvdla : loadable generated from NVDLA compiler
 0000.jpg : 224x224 image for ResNet-50 model
 ```
 
+Note:
+```
+It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for fp16 and ~5hrs for int8. Sometimes it looks like hang but wait.
+```
+
+### Virtual platform from scratch
+
+This section explains how to run test application on virtual platform without any pre-built binaries. It assumes you are using Ubuntu16.04 host system.
+
+1. Install system requirements as per [System Requirements for Virtual Platform](#system-requirements)
+2. Build and install [Buildroot](#buildroot)
+3. mkdir -p /usr/local/nvdla/images/linux-4.13.3
+4. cp {buildroot-root}/output/images/Image /usr/local/nvdla/images/linux-4.13.3/
+5. cp {buildroot-root}/output/images/rootfs.ext4 /usr/local/nvdla/images/linux-4.13.3/
+6. cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/nvdla/
+7. Build [NVDLA Kernel Driver](#nvdla-kernel-driver)
+8. cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
+9. Build [virtual simulator](#build-vp]
+10. Install virtual simulator
+```
+cp {vp-repo-root}/build/bin/aarch64_toplevel /usr/bin/
+cp {vp-repo-root}/build/lib/libcosim_sc_wrapper.so /usr/lib/
+cp {vp-repo-root}/build/lib/libnvdla.so /usr/lib/
+cp {vp-repo-root}/build/lib/libqbox-nvdla.so /usr/lib/
+cp {vp-repo-root}/build/lib/liblog.so /usr/lib/
+cp {vp-repo-root}/build/lib/libnvdla_cmod.so /usr/lib/
+cp {vp-repo-root}/build/lib/libsimplecpu.so /usr/lib/
+cp {vp-repo-root}/conf/aarch64_nvdla.lua /usr/lib/
+cp {vp-repo-root}/libs/qbox.build/share/qemu/efi-virtio.rom /usr/local/nvdla
+```
+11. 
