@@ -101,10 +101,47 @@ For example:
     export TOP={sw-repo-root}/umd
     make TOOLCHAIN_PREFIX={firesim-nvdla-repo}/riscv-tools-install/bin/riscv64-unknown-linux-gnu- runtime
 
-Note
-ARM64 build is dependend on buildroot installation.
-RISC-V build is dependend on RISC-V tools installation
+Note:
 
+ARM64 build is dependent on [buildroot](#buildroot) installation.
+
+RISC-V build is dependent on [RISC-V tools](#firesim) installation
+
+## NVDLA Kernel Driver
+
+### ARM64
+
+NVDLA Kernel Driver for ARM64 virtual platform is loaded as a kernel module. It's source code is at https://github.com/nvdla/sw/tree/master/kmd and pre-built binary is at https://github.com/nvdla/sw/blob/master/prebuilt/arm64-linux/
+
+Register mappings for nv_small/nv_large and nv_full configurations are different and hence pre-built includes two binaries:
+* opendla_1.ko : for nv_full
+* opendla_2.ko : for nv_large and nv_small
+
+#### Updating driver
+
+Note:
+```
+define DLA_2_CONFIG if you want to build driver for nv_small or nv_large configuration otherwise keep it undefined
+```
+
+```
+make KDIR={buildroot-root}/output/build/linux-4.13.3 ARCH=arm64 CROSS_COMPILE={buildroot-root}/output/host/bin/aarch64-linux-gnu-
+```
+
+Refer to [buildroot](#buildroot) for Linux kernel and toolchain
+
+### RISC-V
+
+Currently only FireSim is available as an RISC-V platform. NVDLA Kernel Driver is integrated as part of Linux kernel and present at https://github.com/nvdla/riscv-linux/tree/firesim-nvdla/drivers/nvdla riscv-linux repo is present as sub-module in https://github.com/nvdla/firesim-nvdla and not required to clone separately. It will get cloned and built as part of [FireSim](#firesim) setup.
+
+#### Updating driver
+
+If you want to update NVDLA kernel driver then update code at {firesim-nvdla-repo-root}/sw/firesim-software/risc-linux/drivers/nvdla and run below commands to build and install driver from {firesim-nvdla-repo-root}/sw/firesim-software/
+
+```
+./marshal -v build workloads/nvdla.json
+./marshal install workloads/nvdla.json
+```
 
 ## NVDLA Platforms
 
