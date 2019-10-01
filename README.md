@@ -4,6 +4,7 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 1. Optimize trained neural network for DLA hardware and convert the graph to DLA HW instructions. This converted graph is saved to a flatbuffer file called as loadable. This is achieved using NVDLA compiler and performed offline on host system.
 2. Run inference job on DLA using loadable from step 1. This is achieved using NVDLA runtime and performed on target system.
 
+* [Run Test Application](#run-test-application)
 * [NVDLA Compiler](#nvdla-compiler)
     * [Help](#nvdla-compiler-help)
     * [Example compiling ResNet-50 for nv_small](#nvdla-compiler-example)
@@ -19,6 +20,101 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 * [NVDLA Platforms](#nvdla-platforms)
 * [System requirements for Virtual Platform](#system-requirements)
 * [Buildroot](#buildroot)
+
+## Run Test Application
+
+This section explains how to run test application on different platforms and dependencies for it. First dependency to run test application is loadable generated from NVDLA compiler. Refer to [NVDLA Compiler](#nvdla-compiler) for more details to generate loadable for a network.
+
+ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
+
+<a name="test-app-on-vp"></a>
+### Virtual platform with pre-built
+
+This section explains how to run test application on docker container which has pre-built binaries for nv_full configuration.
+
+```
+docker pull nvdla/vp
+docker run -it -v /home:/home nvdla/vp
+cd /usr/local/nvdla
+export SC_SIGNAL_WRITE_CHECK=DISABLE
+aarch64_toplevel -c aarch64_nvdla.lua
+mount -t 9p -o trans=virtio r /mnt
+cd /mnt
+insmod drm.ko
+insmod opendla_1.ko
+```
+
+Expected output after installing NVDLA driver
+```
+[  310.625140] opendla: loading out-of-tree module taints kernel.
+[  310.629362] 0 . 12 . 5
+[  310.629567] reset engine done
+[  310.633122] [drm] Initialized nvdla 0.0.0 20171017 for 10200000.nvdla on minor 0
+```
+
+Run test application
+```
+./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg
+```
+```
+fast-math.nvdla : loadable generated from NVDLA compiler
+0000.jpg : 224x224 image for ResNet-50 model
+```
+
+Note:
+```
+It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for fp16 and ~5hrs for int8. Sometimes it looks like hang but wait.
+```
+
+### Virtual platform from scratch
+
+This section explains how to run test application on virtual platform without any pre-built binaries.
+Assumption: Host system is Ubuntu16.04
+
+1. Install system requirements as per [System Requirements for Virtual Platform](#system-requirements)
+2. Build and install [Buildroot](#buildroot)
+3. Create required directories
+```
+mkdir -p /usr/local/nvdla/images/linux-4.13.3
+```
+4. Copy Linux kernel image, rootfs and drm driver
+```
+cp {buildroot-root}/output/images/Image /usr/local/nvdla/images/linux-4.13.3/
+cp {buildroot-root}/output/images/rootfs.ext4 /usr/local/nvdla/images/linux-4.13.3/
+cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/nvdla/
+```
+5. Build [NVDLA Kernel Driver](#nvdla-kernel-driver)
+6. Copy NVDLA kernel driver
+```
+cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
+```
+9. Build [virtual simulator](#build-vp]
+10. Install virtual simulator
+```
+cp {vp-repo-root}/build/bin/aarch64_toplevel /usr/bin/
+cp {vp-repo-root}/build/lib/libcosim_sc_wrapper.so /usr/lib/
+cp {vp-repo-root}/build/lib/libnvdla.so /usr/lib/
+cp {vp-repo-root}/build/lib/libqbox-nvdla.so /usr/lib/
+cp {vp-repo-root}/build/lib/liblog.so /usr/lib/
+cp {vp-repo-root}/build/lib/libnvdla_cmod.so /usr/lib/
+cp {vp-repo-root}/build/lib/libsimplecpu.so /usr/lib/
+cp {vp-repo-root}/conf/aarch64_nvdla.lua /usr/lib/
+cp {vp-repo-root}/libs/qbox.build/share/qemu/efi-virtio.rom /usr/local/nvdla
+```
+11. Build [NVDLA runtime](#nvdla-runtime)
+12. Copy runtime lib and app
+```
+cp {sw-repo-root}/umd/out/apps/runtime/nvdla_runtime/nvdla_runtime /usr/local/nvdla
+cp {sw-repo-root}/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so /usr/local/nvdla
+```
+13. Download ResNet-50 caffe model from https://github.com/KaimingHe/deep-residual-networks
+14. Generate loadable using [NVDLA Compiler](#nvdla-compiler)
+15. [Run test application](#test-app-on-vp)
+
+<a name="firesim-test-app"></a>
+### FireSim
+
+
 
 ## NVDLA Compiler
 
@@ -463,96 +559,4 @@ Linux kernel 4.13.3 is downloaded at below location which can be used to build N
 
 ## FireSim
 
-
-## Run Test Application
-
-This section explains how to run test application on different platforms and dependencies for it. First dependency to run test application is loadable generated from NVDLA compiler. Refer to [NVDLA Compiler](#nvdla-compiler) for more details to generate loadable for a network.
-
-ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
-
-<a name="test-app-on-vp"></a>
-### Virtual platform with pre-built
-
-This section explains how to run test application on docker container which has pre-built binaries for nv_full configuration.
-
-```
-docker pull nvdla/vp
-docker run -it -v /home:/home nvdla/vp
-cd /usr/local/nvdla
-export SC_SIGNAL_WRITE_CHECK=DISABLE
-aarch64_toplevel -c aarch64_nvdla.lua
-mount -t 9p -o trans=virtio r /mnt
-cd /mnt
-insmod drm.ko
-insmod opendla_1.ko
-```
-
-Expected output after installing NVDLA driver
-```
-[  310.625140] opendla: loading out-of-tree module taints kernel.
-[  310.629362] 0 . 12 . 5
-[  310.629567] reset engine done
-[  310.633122] [drm] Initialized nvdla 0.0.0 20171017 for 10200000.nvdla on minor 0
-```
-
-Run test application
-```
-./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg
-```
-```
-fast-math.nvdla : loadable generated from NVDLA compiler
-0000.jpg : 224x224 image for ResNet-50 model
-```
-
-Note:
-```
-It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for fp16 and ~5hrs for int8. Sometimes it looks like hang but wait.
-```
-
-### Virtual platform from scratch
-
-This section explains how to run test application on virtual platform without any pre-built binaries.
-Assumption: Host system is Ubuntu16.04
-
-1. Install system requirements as per [System Requirements for Virtual Platform](#system-requirements)
-2. Build and install [Buildroot](#buildroot)
-3. Create required directories
-```
-mkdir -p /usr/local/nvdla/images/linux-4.13.3
-```
-4. Copy Linux kernel image, rootfs and drm driver
-```
-cp {buildroot-root}/output/images/Image /usr/local/nvdla/images/linux-4.13.3/
-cp {buildroot-root}/output/images/rootfs.ext4 /usr/local/nvdla/images/linux-4.13.3/
-cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/nvdla/
-```
-5. Build [NVDLA Kernel Driver](#nvdla-kernel-driver)
-6. Copy NVDLA kernel driver
-```
-cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
-```
-9. Build [virtual simulator](#build-vp]
-10. Install virtual simulator
-```
-cp {vp-repo-root}/build/bin/aarch64_toplevel /usr/bin/
-cp {vp-repo-root}/build/lib/libcosim_sc_wrapper.so /usr/lib/
-cp {vp-repo-root}/build/lib/libnvdla.so /usr/lib/
-cp {vp-repo-root}/build/lib/libqbox-nvdla.so /usr/lib/
-cp {vp-repo-root}/build/lib/liblog.so /usr/lib/
-cp {vp-repo-root}/build/lib/libnvdla_cmod.so /usr/lib/
-cp {vp-repo-root}/build/lib/libsimplecpu.so /usr/lib/
-cp {vp-repo-root}/conf/aarch64_nvdla.lua /usr/lib/
-cp {vp-repo-root}/libs/qbox.build/share/qemu/efi-virtio.rom /usr/local/nvdla
-```
-11. Build [NVDLA runtime](#nvdla-runtime)
-12. Copy runtime lib and app
-```
-cp {sw-repo-root}/umd/out/apps/runtime/nvdla_runtime/nvdla_runtime /usr/local/nvdla
-cp {sw-repo-root}/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so /usr/local/nvdla
-```
-13. Download ResNet-50 caffe model from https://github.com/KaimingHe/deep-residual-networks
-14. Generate loadable using [NVDLA Compiler](#nvdla-compiler)
-15. [Run test application](#test-app-on-vp)
-
-### FireSim
 
