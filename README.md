@@ -53,13 +53,13 @@ NVDLA Compiler can be updated using [source code](https://github.com/nvdla/sw/tr
 
     export TOP={sw-repo-root}/umd
     make compiler
-
-Note:
-   In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below
-   ./configure --enable-shared
-   make
-   make check
-   sudo make install
+    
+    Note :
+    In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below
+    ./configure --enable-shared
+    make
+    make check
+    sudo make install
 
 ## NVDLA Runtime
 
