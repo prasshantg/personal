@@ -54,6 +54,13 @@ NVDLA Compiler can be updated using [source code](https://github.com/nvdla/sw/tr
     export TOP={sw-repo-root}/umd
     make compiler
 
+Note:
+   In some cases if compiler build fails because of linking error with protobuf library then rebuild protobuf library as below
+   ./configure --enable-shared
+   make
+   make check
+   sudo make install
+
 ## NVDLA Runtime
 
 NVDLA compiler is used to run inference on DLA platform using loadable generated from NVDLA compiler. NVDLA runtime can be built from [source code](https://github.com/nvdla/sw/tree/master/umd/core/src/runtime) or directly use pre-compiled binary [arm64](https://github.com/nvdla/sw/tree/master/prebuilt/arm64-linux) or [risc-v](https://github.com/nvdla/sw/tree/master/prebuilt/riscv-linux)
