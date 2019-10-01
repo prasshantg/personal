@@ -510,16 +510,26 @@ It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for
 
 ### Virtual platform from scratch
 
-This section explains how to run test application on virtual platform without any pre-built binaries. It assumes you are using Ubuntu16.04 host system.
+This section explains how to run test application on virtual platform without any pre-built binaries.
+Assumption: Host system is Ubuntu16.04
 
 1. Install system requirements as per [System Requirements for Virtual Platform](#system-requirements)
 2. Build and install [Buildroot](#buildroot)
-3. mkdir -p /usr/local/nvdla/images/linux-4.13.3
-4. cp {buildroot-root}/output/images/Image /usr/local/nvdla/images/linux-4.13.3/
-5. cp {buildroot-root}/output/images/rootfs.ext4 /usr/local/nvdla/images/linux-4.13.3/
-6. cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/nvdla/
-7. Build [NVDLA Kernel Driver](#nvdla-kernel-driver)
-8. cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
+3. Create required directories
+```
+mkdir -p /usr/local/nvdla/images/linux-4.13.3
+```
+4. Copy Linux kernel image, rootfs and drm driver
+```
+cp {buildroot-root}/output/images/Image /usr/local/nvdla/images/linux-4.13.3/
+cp {buildroot-root}/output/images/rootfs.ext4 /usr/local/nvdla/images/linux-4.13.3/
+cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/nvdla/
+```
+5. Build [NVDLA Kernel Driver](#nvdla-kernel-driver)
+6. Copy NVDLA kernel driver
+```
+cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
+```
 9. Build [virtual simulator](#build-vp]
 10. Install virtual simulator
 ```
@@ -533,4 +543,15 @@ cp {vp-repo-root}/build/lib/libsimplecpu.so /usr/lib/
 cp {vp-repo-root}/conf/aarch64_nvdla.lua /usr/lib/
 cp {vp-repo-root}/libs/qbox.build/share/qemu/efi-virtio.rom /usr/local/nvdla
 ```
-11. 
+11. Build [NVDLA runtime](#nvdla-runtime)
+12. Copy runtime lib and app
+```
+cp {sw-repo-root}/umd/out/apps/runtime/nvdla_runtime/nvdla_runtime /usr/local/nvdla
+cp {sw-repo-root}/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so /usr/local/nvdla
+```
+13. Download ResNet-50 caffe model from https://github.com/KaimingHe/deep-residual-networks
+14. Generate loadable using [NVDLA Compiler](#nvdla-compiler)
+15. [Run test application](#test-app-on-vp)
+
+### FireSim
+
