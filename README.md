@@ -18,12 +18,13 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 	* [ARM64](#kmd-arm64)
 	* [RISC-V](#kmd-riscv)
 * [NVDLA Platforms](#nvdla-platforms)
+* [Dependencies](#dependencies)
 * [System requirements for Virtual Platform](#system-requirements)
 * [Buildroot](#buildroot)
 
 ## Run Test Application
 
-This section explains how to run test application on different platforms and dependencies for it. First dependency to run test application is loadable generated from NVDLA compiler. Refer to [NVDLA Compiler](#nvdla-compiler) for more details to generate loadable for a network.
+This section explains how to run test application on available [NVDLA platforms](#nvdla-platforms) and dependencies for it. First dependency to run test application is loadable generated from NVDLA compiler. Refer to [NVDLA Compiler](#nvdla-compiler) for more details to generate loadable for a network.
 
 ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
 
@@ -452,10 +453,12 @@ make
 make install
 ```
 
-<a name="system-requirements"></a>
-## System requirements for Virtual Platform
+## Dependencies
 
-### Install tools and libraries
+<a name="system-requirements"></a>
+### System requirements for Virtual Platform
+
+#### Install tools and libraries
 
 ```
 sudo apt-get update
@@ -473,7 +476,7 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 ```
 
-### Install SystemC 2.3.0 (Note: SystemC 2.3.1/2.3.2 not supported)
+#### Install SystemC 2.3.0 (Note: SystemC 2.3.1/2.3.2 not supported)
 
 ```
 wget -O systemc-2.3.0a.tar.gz http://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.0a.tar.gz 
@@ -487,7 +490,7 @@ make
 sudo make install
 ```
 
-### Install Perl package
+#### Install Perl package
 
 ```
 wget -O YAML-1.24.tar.gz http://search.cpan.org/CPAN/authors/id/T/TI/TINITA/YAML-1.24.tar.gz 
@@ -506,7 +509,7 @@ cpan -i Capture::Tiny [Note: Fix nvdla.org for it]
 cpan -i XML::Simple [Note: Fix nvdla.org for it]
 ```
 
-## Buildroot
+### Buildroot
 
 ```
 git clone https://github.com/nvdla/buildroot
@@ -533,7 +536,7 @@ make menuconfig
 make -j4
 ```
 
-### Files to use from build
+#### Files to use from build
 
 ```
 {buildroot-root}/output/images/Image
@@ -541,7 +544,7 @@ make -j4
 {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko
 ```
 
-### Toolchain
+#### Toolchain
 
 Toolchain is downloaded at below location which can be used to build NVDLA kernel driver and NVDLA runtime for ARM64
 
@@ -549,14 +552,12 @@ Toolchain is downloaded at below location which can be used to build NVDLA kerne
 {buildroot-root}/output/host/bin/aarch64-linux-gnu-
 ```
 
-### Linux kernel 4.13.3
+#### Linux kernel 4.13.3
 
 Linux kernel 4.13.3 is downloaded at below location which can be used to build NVDLA kernel driver for ARM64
 
 ```
 {buildroot-root}/output/build/linux-4.13.3
 ```
-
-## FireSim
 
 
