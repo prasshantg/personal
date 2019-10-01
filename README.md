@@ -14,8 +14,9 @@ NVDLA enables accelerating neural network inference job which is achieved in two
     * [Example running ResNet-50 on nv_small](#nvdla-runtime-example)
     * [Modifying NVDLA Runtime](#nvdla-runtime-update)
 * [NVDLA Platforms](#nvdla-platforms)
-* [Installing system requirements for Virtual Platform](#system-requirements)
-
+* [System requirements for Virtual Platform](#system-requirements)
+* [Buildroot](#buildroot)
+* [FireSim](#firesim)
 
 ## NVDLA Compiler
 
@@ -100,7 +101,9 @@ For example:
     export TOP={sw-repo-root}/umd
     make TOOLCHAIN_PREFIX={firesim-nvdla-repo}/riscv-tools-install/bin/riscv64-unknown-linux-gnu- runtime
 
-See for buildroot instructions and for riscv-tools installation instructions
+Note
+ARM64 build is dependend on buildroot installation.
+RISC-V build is dependend on RISC-V tools installation
 
 
 ## NVDLA Platforms
@@ -316,7 +319,7 @@ make install
 ```
 
 <a name="system-requirements"></a>
-## Installing system requirements for Virtual Platform
+## System requirements for Virtual Platform
 
 ### Install tools and libraries
 
@@ -368,4 +371,57 @@ sudo make install
 cpan -i Capture::Tiny [Note: Fix nvdla.org for it]
 cpan -i XML::Simple [Note: Fix nvdla.org for it]
 ```
+
+## Buildroot
+
+```
+git clone https://github.com/nvdla/buildroot
+```
+
+```
+make qemu_aarch64_virt_defconfig
+make menuconfig
+   * Target Options -> Target Architecture -> AArch64 (little endian)
+	* Target Options -> Target Architecture Variant -> cortex-A57
+	* Toolchain -> Custom kernel headers series -> 4.13.x
+	* Toolchain -> Toolchain type -> External toolchain
+	* Toolchain -> Toolchain -> Linaro AArch64 2017.08
+	* Toolchain -> Toolchain origin -> Toolchain to be downloaded and installed
+	* Toolchain -> Copy gdb server to the Target
+	* Kernel -> () Kernel version -> 4.13.3
+	* Kernel -> Kernel configuration -> Use the architecture default configuration
+	* System configuration -> Enable root login with password -> Y
+	* System configuration -> Root password -> nvdla
+	* Target Packages -> Show packages that are also provided by busybox -> Y
+	* Target Packages -> Networking applications -> openssh -> Y
+	* Target Packages -> Debugging, profiling and benchmark -> gdb -> Y
+   * Target Packages -> Debugging, profiling and benchmark -> full debugger -> Y
+make -j4
+```
+
+### Files to use from build
+
+```
+{buildroot-root}/output/images/Image
+{buildroot-root}/output/images/rootfs.ext4
+{buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko
+```
+
+### Toolchain
+
+Toolchain is downloaded at below location which can be used to build NVDLA kernel driver and NVDLA runtime for ARM64
+
+```
+{buildroot-root}/output/host/bin/aarch64-linux-gnu-
+```
+
+### Linux kernel 4.13.3
+
+Linux kernel 4.13.3 is downloaded at below location which can be used to build NVDLA kernel driver for ARM64
+
+```
+{buildroot-root}/output/build/linux-4.13.3
+```
+
+## FireSim
 
