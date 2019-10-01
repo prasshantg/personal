@@ -151,9 +151,6 @@ If you want to update NVDLA kernel driver then update code at {firesim-nvdla-rep
 ## NVDLA Platforms
 
 Below platforms are available for NVDLA development and verification
-1. [Virtual Platform](http://nvdla.org/vp.html)
-2. [Virtual Platform on AWS FPGA](http://nvdla.org/vp_fpga.html)
-3. [FireSim](https://github.com/nvdla/firesim-nvdla)
 
 * [Virtual Platform](#virtual-platform)
     * [Using pre-built virtual simulator in docker](#prebuilt-docker)
