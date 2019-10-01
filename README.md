@@ -162,7 +162,11 @@ cd firesim-nvdla/sw/firesim-software
 ./marshal -v build workloads/nvdla.json
 ./marshal install workloads/nvdla.json
 ```
-
+7. [Launch simulation](http://docs.fires.im/en/1.6.0/Running-Simulations-Tutorial/Running-a-Single-Node-Simulation.html#launching-a-simulation)
+8. After login to the system run NVDLA runtime test application
+```
+./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg
+```
 
 ## NVDLA Compiler
 
