@@ -462,3 +462,44 @@ Linux kernel 4.13.3 is downloaded at below location which can be used to build N
 
 ## FireSim
 
+
+## Run Test Application
+
+This section explains how to run test application on different platforms and dependencies for it. First dependency to run test application is loadable generated from NVDLA compiler. Refer to [NVDLA Compiler](#nvdla-compiler) for more details to generate loadable for a network.
+
+ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
+
+<a name="test-app-on-vp"></a>
+### Virtual platform on docker container
+
+This section explains how to run test application on docker container which has pre-built binaries for nv_full configuration.
+
+```
+docker pull nvdla/vp
+docker run -it -v /home:/home nvdla/vp
+cd /usr/local/nvdla
+export SC_SIGNAL_WRITE_CHECK=DISABLE
+aarch64_toplevel -c aarch64_nvdla.lua
+mount -t 9p -o trans=virtio r /mnt
+cd /mnt
+insmod drm.ko
+insmod opendla_1.ko
+```
+
+Expected output after installing NVDLA driver
+```
+[  310.625140] opendla: loading out-of-tree module taints kernel.
+[  310.629362] 0 . 12 . 5
+[  310.629567] reset engine done
+[  310.633122] [drm] Initialized nvdla 0.0.0 20171017 for 10200000.nvdla on minor 0
+```
+
+Run test application
+```
+./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg
+```
+```
+fast-math.nvdla : loadable generated from NVDLA compiler
+0000.jpg : 224x224 image for ResNet-50 model
+```
+
