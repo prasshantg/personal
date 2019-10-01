@@ -13,6 +13,9 @@ NVDLA enables accelerating neural network inference job which is achieved in two
     * [Help](#nvdla-runtime-help)
     * [Example running ResNet-50 on nv_small](#nvdla-runtime-example)
     * [Modifying NVDLA Runtime](#nvdla-runtime-update)
+* [NVDLA Kernel Driver](#nvdla-kernel-driver)
+	* [ARM64](#kmd-arm64)
+	* [RISC-V](#kmd-riscv)
 * [NVDLA Platforms](#nvdla-platforms)
 * [System requirements for Virtual Platform](#system-requirements)
 * [Buildroot](#buildroot)
@@ -109,6 +112,7 @@ RISC-V build is dependent on [RISC-V tools](#firesim) installation
 
 ## NVDLA Kernel Driver
 
+<a name="kmd-arm64"></a>
 ### ARM64
 
 NVDLA Kernel Driver for ARM64 virtual platform is loaded as a kernel module. It's source code is at https://github.com/nvdla/sw/tree/master/kmd and pre-built binary is at https://github.com/nvdla/sw/blob/master/prebuilt/arm64-linux/
@@ -130,6 +134,7 @@ make KDIR={buildroot-root}/output/build/linux-4.13.3 ARCH=arm64 CROSS_COMPILE={b
 
 Refer to [buildroot](#buildroot) for Linux kernel and toolchain
 
+<a name="kmd-riscv"></a>
 ### RISC-V
 
 Currently only FireSim is available as an RISC-V platform. NVDLA Kernel Driver is integrated as part of Linux kernel and present at https://github.com/nvdla/riscv-linux/tree/firesim-nvdla/drivers/nvdla riscv-linux repo is present as sub-module in https://github.com/nvdla/firesim-nvdla and not required to clone separately. It will get cloned and built as part of [FireSim](#firesim) setup.
