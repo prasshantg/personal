@@ -19,8 +19,8 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 	* [RISC-V](#kmd-riscv)
 * [NVDLA Platforms](#nvdla-platforms)
 * [Dependencies](#dependencies)
-* [System requirements for Virtual Platform](#system-requirements)
-* [Buildroot](#buildroot)
+	* [System requirements for Virtual Platform](#system-requirements)
+	* [Buildroot](#buildroot)
 
 ## Run Test Application
 
@@ -29,17 +29,27 @@ This section explains how to run test application on available [NVDLA platforms]
 ResNet-50 model from https://github.com/KaimingHe/deep-residual-networks is verified on this platform for all configurations (nv_full/nv_large/nv_small) and it can be used to start with.
 
 <a name="test-app-on-vp"></a>
-### Virtual platform with pre-built
+### Virtual platform with pre-built binaries
 
 This section explains how to run test application on docker container which has pre-built binaries for nv_full configuration.
 
+#### Pull docker container
 ```
 docker pull nvdla/vp
 docker run -it -v /home:/home nvdla/vp
+```
+<a name="ins-kmd-mod"></a>
+#### Run Simulator
+
 cd /usr/local/nvdla
 export SC_SIGNAL_WRITE_CHECK=DISABLE
 aarch64_toplevel -c aarch64_nvdla.lua
 mount -t 9p -o trans=virtio r /mnt
+
+
+#### Insert kernel driver modules
+
+```
 cd /mnt
 insmod drm.ko
 insmod opendla_1.ko
@@ -53,7 +63,7 @@ Expected output after installing NVDLA driver
 [  310.633122] [drm] Initialized nvdla 0.0.0 20171017 for 10200000.nvdla on minor 0
 ```
 
-Run test application
+#### Run test application
 ```
 ./nvdla_runtime --loadable fast-math.nvdla --image 0000.jpg
 ```
@@ -89,7 +99,7 @@ cp {buildroot-root}/output/build/linux-4.13.3/drivers/gpu/drm/drm.ko /usr/local/
 ```
 cp {sw-repo-root}/kmd/port/linux/opendla.ko /usr/local/nvdla/
 ```
-9. Build [virtual simulator](#build-vp]
+9. Build [virtual simulator](#build-vp)
 10. Install virtual simulator
 ```
 cp {vp-repo-root}/build/bin/aarch64_toplevel /usr/bin/
@@ -110,7 +120,9 @@ cp {sw-repo-root}/umd/out/core/src/runtime/libnvdla_runtime/libnvdla_runtime.so 
 ```
 13. Download ResNet-50 caffe model from https://github.com/KaimingHe/deep-residual-networks
 14. Generate loadable using [NVDLA Compiler](#nvdla-compiler)
-15. [Run test application](#test-app-on-vp)
+15. [Run simulator](#run-simulator)
+16. [Insert kernel driver modules](#ins-kmd-mod)
+17. [Run application](#run-application)
 
 <a name="firesim-test-app"></a>
 ### FireSim
@@ -264,7 +276,7 @@ There are two options to use virtual platform
 2. Build and install virtual simulator
 
 <a name="prebuilt-docker"></a>
-#### 1. Using pre-built virtual simulator in docker
+#### Using pre-built virtual simulator in docker
 
 This is easy step to start getting introduced to NVDLA. [Docker container](https://hub.docker.com/r/nvdla/vp) includes pre-built CMOD and software for *nv_full* configuration along with it all the system requirements to build simulator and virtual platform for difference NVDLA configuration.
 
@@ -293,7 +305,7 @@ After this follow guideline for NVDLA [compiler](#nvdla-compiler) and [runtime](
 ctrl+a x
 
 <a name="build-vp"></a>
-#### 2. Build virtual simulator
+#### Build virtual simulator
 
 Docker container has pre-installed all system requirements to build virtual simulator. If not using docker container then refer to [installing system requirements](installing-system-requirements).
 
