@@ -19,7 +19,6 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 * [NVDLA Platforms](#nvdla-platforms)
 * [System requirements for Virtual Platform](#system-requirements)
 * [Buildroot](#buildroot)
-* [FireSim](#firesim)
 
 ## NVDLA Compiler
 
