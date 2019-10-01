@@ -5,6 +5,9 @@ NVDLA enables accelerating neural network inference job which is achieved in two
 2. Run inference job on DLA using loadable from step 1. This is achieved using NVDLA runtime and performed on target system.
 
 * [Run Test Application](#run-test-application)
+	* [Virtual platform with pre-built binaries](#test-app-on-vp)
+	* [Virtual platform from scratch](#vp-from-scratch)
+	* [FireSim](#firesim-test-app)
 * [NVDLA Compiler](#nvdla-compiler)
     * [Help](#nvdla-compiler-help)
     * [Example compiling ResNet-50 for nv_small](#nvdla-compiler-example)
@@ -82,6 +85,7 @@ It takes very long to execute ResNet-50 on virtual platform. It took ~2.5hrs for
 #### Exit NVDLA virtual simulator
 ctrl+a x
 
+<a name="vp-from-scratch"></a>
 ### Virtual platform from scratch
 
 This section explains how to run test application on virtual platform without any pre-built binaries.
