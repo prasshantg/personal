@@ -192,6 +192,19 @@ NVDLA compiler is used to optimize neural network for DLA HW architecture and cr
 
     ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_small --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
 
+### Example compiling ResNet-50 for nv_large
+
+    ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_large --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
+
+### Example compiling ResNet-50 for nv_full fp16
+
+    ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision fp16 --configtarget nv_full --batch 1 --informat nhwc
+
+### Example compiling ResNet-50 for nv_full int8
+
+    ./nvdla_compiler --prototxt ResNet-50-deploy.prototxt --caffemodel ResNet-50-model.caffemodel -o . --profile fast-math --cprecision int8 --configtarget nv_full --calibtable resnet50.json --quantizationMode per-filter --batch 1 --informat nhwc
+
+
 <a name="nvdla-compiler-output"></a>
 ### Output
 
